@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
+using Dapper;
 
 namespace Shop.Data
 {
@@ -19,67 +20,97 @@ namespace Shop.Data
             _connection = new SqlConnection(options.Value.DBConnectionString);
         }
 
-        public LeadRepository()
+        public ShopRepository()
         { }
         public DataWrapper<OrderDto> GetOrderById(long id)
         {
+            var orderDictionary = new Dictionary<long, OrderDto>();
             var result = new DataWrapper<OrderDto>();
             try
             {
-                result.Data = await _storage.OrderGetById(id);
-                result.RequestData.OrderItems = await _storage.OrderProductsGetByOrderId((int)result.RequestData.Id);
-                result.IsOkay = true;
-            }
-            catch (Exception ex)
-            {
-                result.ExMessage = ex.Message;
-            }
-            return result;
-        }
+                result.Data = _connection.Query<OrderDto, ProductOrderWithFullProductInfoDto, ProductDto, OrderDto>(
+                    "Order_GetById",
+                    (order, productOrder, product) =>
+                    {
+                        OrderDto orderEntry;
+                        if (!orderDictionary.TryGetValue(order.Id.Value, out orderEntry))
+                        {
+                            orderEntry = order;
+                            orderEntry.OrderItems = new List<ProductOrderWithFullProductInfoDto>();
+                            orderDictionary.Add(orderEntry.Id.Value, orderEntry);
+                        }
+                        productOrder.Product = product;
+                        orderEntry.OrderItems.Add(productOrder);
 
-        public async ValueTask<RequestResult<List<Order>>> OrderGetByCustomerId(int id)
-        {
-            var result = new RequestResult<List<Order>>();
-            try
-            {
-                result.RequestData = await _storage.OrderGetByCustomerId(id);
-                foreach (var order in result.RequestData)
-                {
-                    order.OrderItems = await _storage.OrderProductsGetByOrderId((int)order.Id);
-                }
-                result.IsOkay = true;
+                        return orderEntry;
+
+                    },
+                    new { id }, splitOn: "Id",
+                    commandType: CommandType.StoredProcedure).FirstOrDefault();
+                result.IsOk = true;
             }
-            catch (Exception ex)
+            catch (Exception e)
             {
-                result.ExMessage = ex.Message;
+                result.ExceptionMessage = e.Message;
             }
             return result;
         }
 
-        public async ValueTask<RequestResult<Order>> CreateOrder(Order order)
+        public DataWrapper<List<OrderDto>> GetOrderByCustomerId(long customerId)
         {
-            var result = new RequestResult<Order>();
-
+            var orderDictionary = new Dictionary<long, OrderDto>();
+            var result = new DataWrapper<List<OrderDto>>();
             try
             {
-                _storage.TransactionStart();
-                result.RequestData = (await _storage.OrderInsert(order));
-                result.RequestData.OrderItems = new List<Order_Product>();
+                result.Data = _connection.Query<OrderDto, ProductOrderWithFullProductInfoDto, ProductDto, OrderDto>(
+                    "Order_GetByCustomerId",
+                    (order, productOrder, product) =>
+                    {
+                        OrderDto orderEntry;
+                        if (!orderDictionary.TryGetValue(order.Id.Value, out orderEntry))
+                        {
+                            orderEntry = order;
+                            orderEntry.OrderItems = new List<ProductOrderWithFullProductInfoDto>();
+                            orderDictionary.Add(orderEntry.Id.Value, orderEntry);
+                        }
+                        productOrder.Product = product;
+                        orderEntry.OrderItems.Add(productOrder);
 
+                        return orderEntry;
+
+                    },
+                    new { customerId }, splitOn: "Id",
+                    commandType: CommandType.StoredProcedure).ToList();
+                result.IsOk = true;
+            }
+            catch (Exception e)
+            {
+                result.ExceptionMessage = e.Message;
+            }
+            return result;
+        }
+
+        public DataWrapper<OrderDto> CreateOrder(OrderDto order)
+        {
+            var result = new DataWrapper<OrderDto>();
+            IDbTransaction transaction = _connection.BeginTransaction();
+            try
+            {
+                result.Data = _connection.Query<OrderDto>("Order_Add_Or_Update", order, commandType: CommandType.StoredProcedure).FirstOrDefault();
+
+                result.Data.OrderItems = new List<ProductOrderWithFullProductInfoDto>();
                 foreach (var item in order.OrderItems)
                 {
-                    item.OrderId = result.RequestData.Id;
-                    var productPrice = (await _storage.ProductsGetById(item.Product.Id)).Price;
-                    item.LocalPrice = productPrice * item.Value * order.Valute.Nominal / order.Valute.Value;
-                    result.RequestData.OrderItems.Add(await _storage.OrderProductInsert(item));
+                    item.OrderId = result.Data.Id;
+                    result.Data.OrderItems.Add(_connection.Query<ProductOrderWithFullProductInfoDto>("Product_Order_Add_Or_Update", item, commandType: CommandType.StoredProcedure).FirstOrDefault());
                 }
-                _storage.TransactionCommit();
-                result.IsOkay = true;
+                transaction.Commit();
+                result.IsOk = true;
             }
             catch (Exception ex)
             {
-                _storage.TransactioRollBack();
-                result.ExMessage = ex.Message;
+                transaction.Rollback();
+                result.ExceptionMessage = ex.Message;
             }
             return result;
         }

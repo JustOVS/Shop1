@@ -8,6 +8,7 @@ using AutoMapper;
 using System;
 using Microsoft.OpenApi.Models;
 using Shop.API.Configuration;
+using Shop.Core;
 
 namespace Shop
 {
@@ -33,8 +34,7 @@ namespace Shop
 
             services.AddMvcCore();
             services.AddControllers();
-
-
+            services.Configure<StorageOptions>(Configuration);
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc(name: "v1", new OpenApiInfo { Title = "Shop.API", Version = "v1" });

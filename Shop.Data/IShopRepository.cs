@@ -1,7 +1,12 @@
-﻿namespace Shop.Data
+﻿using Shop.Data.Dto;
+using System.Collections.Generic;
+
+namespace Shop.Data
 {
     public interface IShopRepository
     {
-        int x();
+        DataWrapper<OrderDto> GetOrderById(long id);
+        DataWrapper<List<OrderDto>> GetOrderByCustomerId(long customerId);
+        DataWrapper<OrderDto> CreateOrder(OrderDto order);
     }
 }

@@ -22,13 +22,14 @@ namespace Shop.Data
 
         public ShopRepository()
         { }
+
         public DataWrapper<OrderDto> GetOrderById(long id)
         {
             var orderDictionary = new Dictionary<long, OrderDto>();
             var result = new DataWrapper<OrderDto>();
             try
             {
-                result.Data = _connection.Query<OrderDto, ProductOrderWithFullProductInfoDto, ProductDto, OrderDto>(
+                result.Data = _connection.Query<OrderDto, ProductOrderDto, ProductDto, OrderDto>(
                     "Order_GetById",
                     (order, productOrder, product) =>
                     {
@@ -36,7 +37,7 @@ namespace Shop.Data
                         if (!orderDictionary.TryGetValue(order.Id.Value, out orderEntry))
                         {
                             orderEntry = order;
-                            orderEntry.OrderItems = new List<ProductOrderWithFullProductInfoDto>();
+                            orderEntry.OrderItems = new List<ProductOrderDto>();
                             orderDictionary.Add(orderEntry.Id.Value, orderEntry);
                         }
                         productOrder.Product = product;
@@ -62,7 +63,7 @@ namespace Shop.Data
             var result = new DataWrapper<List<OrderDto>>();
             try
             {
-                result.Data = _connection.Query<OrderDto, ProductOrderWithFullProductInfoDto, ProductDto, OrderDto>(
+                result.Data = _connection.Query<OrderDto, ProductOrderDto, ProductDto, OrderDto>(
                     "Order_GetByCustomerId",
                     (order, productOrder, product) =>
                     {
@@ -70,7 +71,7 @@ namespace Shop.Data
                         if (!orderDictionary.TryGetValue(order.Id.Value, out orderEntry))
                         {
                             orderEntry = order;
-                            orderEntry.OrderItems = new List<ProductOrderWithFullProductInfoDto>();
+                            orderEntry.OrderItems = new List<ProductOrderDto>();
                             orderDictionary.Add(orderEntry.Id.Value, orderEntry);
                         }
                         productOrder.Product = product;
@@ -98,11 +99,27 @@ namespace Shop.Data
             {
                 result.Data = _connection.Query<OrderDto>("Order_Add_Or_Update", order, commandType: CommandType.StoredProcedure).FirstOrDefault();
 
-                result.Data.OrderItems = new List<ProductOrderWithFullProductInfoDto>();
+                result.Data.OrderItems = new List<ProductOrderDto>();
                 foreach (var item in order.OrderItems)
                 {
-                    item.OrderId = result.Data.Id;
-                    result.Data.OrderItems.Add(_connection.Query<ProductOrderWithFullProductInfoDto>("Product_Order_Add_Or_Update", item, commandType: CommandType.StoredProcedure).FirstOrDefault());
+                    
+                    result.Data.OrderItems.Add(_connection.Query<ProductOrderDto, ProductDto, ProductOrderDto>("Product_Order_Add_Or_Update",
+                        (productOrder, product) =>
+                        {
+                           ProductOrderDto productOrderEntry;
+                            productOrderEntry = productOrder;
+                            productOrderEntry.Product = product;
+                            return productOrderEntry;
+                        },
+
+                        new 
+                        { 
+                            id = item.Id.Value,
+                            productId = item.Product.Id,
+                            OrderId = result.Data.Id,
+                           item.Quantity
+                        }, 
+                        splitOn: "Id", commandType: CommandType.StoredProcedure).FirstOrDefault());
                 }
                 transaction.Commit();
                 result.IsOk = true;

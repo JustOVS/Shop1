@@ -23,7 +23,9 @@ namespace Shop.API.Configuration
                  .ForPath(dest => dest.Product, o => o.MapFrom(src => src.Product));
 
             CreateMap<ProductDto, ProductOutputModel>();
-                 
+            
+            CreateMap<ProductInputModel, ProductDto>();
+
         }
     }
 }

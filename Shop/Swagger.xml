@@ -14,13 +14,42 @@
             <summary>
             creates a new order
             </summary>
-            <param name="orderModel"></param>       
+            <param name="order"></param>       
         </member>
         <member name="M:Shop.Controllers.OrderController.GetOrdersByCustomerId(System.Int32)">
             <summary>
             gets orders by customers Id 
             </summary>
             <param name="customerId"></param>       
+        </member>
+        <member name="M:Shop.Controllers.OrderController.DeleteOrderById(System.Int64)">
+            <summary>
+            delete order by  id 
+            </summary>
+            <param name="id"></param>    
+        </member>
+        <member name="M:Shop.Controllers.ProductController.GetAllProducts">
+            <summary>
+            gets all products
+            </summary>
+        </member>
+        <member name="M:Shop.Controllers.ProductController.GetProductById(System.Int64)">
+            <summary>
+            gets product by Id
+            </summary>
+            <param name="id"></param>       
+        </member>
+        <member name="M:Shop.Controllers.ProductController.AddProduct(Shop.API.Models.InputModels.ProductInputModel)">
+            <summary>
+            Add new product
+            </summary>
+            <param name="product"></param>       
+        </member>
+        <member name="M:Shop.Controllers.ProductController.DeleteProductById(System.Int64)">
+            <summary>
+            delete product by  id 
+            </summary>
+            <param name="id"></param>    
         </member>
     </members>
 </doc>

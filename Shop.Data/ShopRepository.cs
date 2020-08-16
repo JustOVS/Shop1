@@ -131,5 +131,102 @@ namespace Shop.Data
             }
             return result;
         }
+
+        public DataWrapper<int> DeleteOrderById(long id)
+        {
+            var result = new DataWrapper<int>();
+
+            try 
+            { 
+            result.Data = _connection.Execute("Order_Delete", new { id }, commandType: CommandType.StoredProcedure);
+            result.IsOk = true;
+            }
+
+            catch (Exception e)
+            {
+                result.ExceptionMessage = e.Message;
+            }
+            return result;
+        }
+
+        public DataWrapper<List<ProductDto>> GetAllProducts()
+        {
+            
+            var result = new DataWrapper<List<ProductDto>>();
+            try
+            {
+                result.Data = _connection.Query<ProductDto>("Product_GetAll", commandType: CommandType.StoredProcedure).ToList();
+                result.IsOk = true;
+            }
+            catch (Exception e)
+            {
+                result.ExceptionMessage = e.Message;
+            }
+            return result;
+        }
+
+        public DataWrapper<ProductDto> GetProductById(long id)
+        {
+
+            var result = new DataWrapper<ProductDto>();
+            try
+            {
+                result.Data = _connection.Query<ProductDto>("Product_GetById", new { id }, commandType: CommandType.StoredProcedure).FirstOrDefault();
+                result.IsOk = true;
+            }
+            catch (Exception e)
+            {
+                result.ExceptionMessage = e.Message;
+            }
+            return result;
+        }
+        public DataWrapper<long> AddProduct(ProductDto product)
+        {
+
+            var result = new DataWrapper<long>();
+            try
+            {
+                result.Data = _connection.Query<long>("Product_Add_Or_Update", product, commandType: CommandType.StoredProcedure).FirstOrDefault();
+                result.IsOk = true;
+            }
+            catch (Exception e)
+            {
+                result.ExceptionMessage = e.Message;
+            }
+            return result;
+        }
+
+        public DataWrapper<int> DeleteProductById(long id)
+        {
+            var result = new DataWrapper<int>();
+
+            try
+            {
+                result.Data = _connection.Execute("Product_Delete", new { id }, commandType: CommandType.StoredProcedure);
+                result.IsOk = true;
+            }
+
+            catch (Exception e)
+            {
+                result.ExceptionMessage = e.Message;
+            }
+            return result;
+        }
+
+        public DataWrapper<int> UpdateProduct(ProductDto product)
+        {
+
+            var result = new DataWrapper<int>();
+            try
+            {
+                result.Data = _connection.Execute("Product_Add_Or_Update", product, commandType: CommandType.StoredProcedure);
+                result.IsOk = true;
+            }
+            catch (Exception e)
+            {
+                result.ExceptionMessage = e.Message;
+            }
+            return result;
+        }
     }
 }

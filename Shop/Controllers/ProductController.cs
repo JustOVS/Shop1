@@ -11,12 +11,12 @@ namespace Shop.Controllers
 {
     [ApiController]
     [Route("[controller]")]
-    public class OrderController : Controller
+    public class ProductController : Controller
     {
         private readonly IShopRepository _repo;
         private readonly IMapper _mapper;
 
-        public OrderController( IShopRepository repo, IMapper mapper)
+        public ProductController(IShopRepository repo, IMapper mapper)
         {
 
             _mapper = mapper;
@@ -25,57 +25,56 @@ namespace Shop.Controllers
 
 
         /// <summary>
-        /// gets order by Id with all information
+        /// gets all products
+        /// </summary>
+  
+
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [HttpGet]
+        public ActionResult<List<ProductOutputModel>> GetAllProducts()
+        {
+            DataWrapper<List<ProductDto>> dataWrapper = _repo.GetAllProducts();
+            return MakeResponse(dataWrapper, _mapper.Map<List<ProductOutputModel>>);
+        }
+
+        /// <summary>
+        /// gets product by Id
         /// </summary>
         /// <param name="id"></param>       
 
         [ProducesResponseType(StatusCodes.Status200OK)]
         [HttpGet("{id}")]
-        public ActionResult<OrderOutputModel> GetOrderById(long id)
+        public ActionResult<ProductOutputModel> GetProductById(long id)
         {
-            DataWrapper<OrderDto> dataWrapper = _repo.GetOrderById(id);
-            return MakeResponse(dataWrapper, _mapper.Map<OrderOutputModel>);
+            DataWrapper<ProductDto> dataWrapper = _repo.GetProductById(id);
+            return MakeResponse(dataWrapper, _mapper.Map<ProductOutputModel>);
         }
 
         /// <summary>
-        /// creates a new order
+        /// Add new product
         /// </summary>
-        /// <param name="order"></param>       
+        /// <param name="product"></param>       
 
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [HttpPost]
-        public ActionResult<OrderOutputModel> CreateOrder([FromBody] OrderInputModel order)
+        public ActionResult<long> AddProduct(ProductInputModel product)
         {
-          
-            DataWrapper<OrderDto> DataWrapper = _repo.CreateOrder(_mapper.Map<OrderDto>(order));
-            return MakeResponse(DataWrapper, _mapper.Map<OrderOutputModel>);
+            DataWrapper<long> DataWrapper = _repo.AddProduct(_mapper.Map<ProductDto>(product));
+            return MakeResponse(DataWrapper);
         }
 
-        
 
-        
-        /// <summary>
-        /// gets orders by customers Id 
-        /// </summary>
-        /// <param name="customerId"></param>       
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        [HttpGet("customer/{Id}")]
-        public ActionResult<List<OrderOutputModel>> GetOrdersByCustomerId(int customerId)
-        {
-            DataWrapper<List<OrderDto>> dataWrapper = _repo.GetOrderByCustomerId(customerId);
-            return MakeResponse(dataWrapper, _mapper.Map<List<OrderOutputModel>>);
-        }
 
         /// <summary>
-        /// delete order by  id 
+        /// delete product by  id 
         /// </summary>
         /// <param name="id"></param>    
         [ProducesResponseType(StatusCodes.Status200OK)]
         [HttpDelete("{id}")]
-        public ActionResult<int> DeleteOrderById(long id)
+        public ActionResult<int> DeleteProductById(long id)
         {
-            DataWrapper<int> dataWrapper = _repo.DeleteOrderById(id);
+            DataWrapper<int> dataWrapper = _repo.DeleteProductById(id);
             return MakeResponse(dataWrapper);
         }
 

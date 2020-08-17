@@ -26,6 +26,19 @@ namespace Shop.API.Configuration
             
             CreateMap<ProductInputModel, ProductDto>();
 
+            CreateMap<ProductDto, VacuumCleanerOutputModel>();
+            CreateMap<ProductDto, WashingMachineOutputModel>();
+            CreateMap<ProductDto, MicrowaveOutputModel>();
+            CreateMap<ProductDto, KitchenStoveOutputModel>();
+            CreateMap<ProductDto, KettleOutputModel>();
+            CreateMap<ProductDto, CoffeeMakerOutputModel>();
+            CreateMap<ProductDto, DishwasherOutputModel>();
+            CreateMap<ProductDto, MulticookerOutputModel>();
+            CreateMap<ProductDto, ToasterOutputModel>();
+            CreateMap<ProductDto, IronOutputModel>();
+            CreateMap<ProductDto, MixerOutputModel>();
+            CreateMap<ProductDto, HairdryerOutputModel>();
+            CreateMap<ProductDto, FanOutputModel>();
         }
     }
 }

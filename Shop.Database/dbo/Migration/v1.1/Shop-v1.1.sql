@@ -1,0 +1,1 @@
+﻿DECLARE @currentDBVersion nvarchar(10);set @currentDBVersion = (select top(1) DbVersion from [dbo].[DbVersion] order by Created desc)IF @currentDBVersion < '1.1'INSERT INTO dbo.[DbVersion] (Created, DbVersion) VALUES (SYSDATETIME(), '1.1')go

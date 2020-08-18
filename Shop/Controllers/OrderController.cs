@@ -60,7 +60,7 @@ namespace Shop.Controllers
         /// </summary>
         /// <param name="customerId"></param>       
         [ProducesResponseType(StatusCodes.Status200OK)]
-        [HttpGet("customer/{Id}")]
+        [HttpGet("customer/{customerId}")]
         public ActionResult<List<OrderOutputModel>> GetOrdersByCustomerId(int customerId)
         {
             DataWrapper<List<OrderDto>> dataWrapper = _repo.GetOrderByCustomerId(customerId);

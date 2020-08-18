@@ -30,7 +30,7 @@ namespace Shop.Data
             try
             {
                 result.Data = _connection.Query<OrderDto, ProductOrderDto, ProductDto, OrderDto>(
-                    "Order_GetById",
+                    "GetOrderWithProductsByOrderId",
                     (order, productOrder, product) =>
                     {
                         OrderDto orderEntry;
@@ -57,7 +57,7 @@ namespace Shop.Data
             return result;
         }
 
-        public DataWrapper<List<OrderDto>> GetOrderByCustomerId(long customerId)
+        public DataWrapper<List<OrderDto>> GetOrderByCustomerId(int customerId)
         {
             var orderDictionary = new Dictionary<long, OrderDto>();
             var result = new DataWrapper<List<OrderDto>>();
@@ -72,7 +72,7 @@ namespace Shop.Data
                         {
                             orderEntry = order;
                             orderEntry.OrderItems = new List<ProductOrderDto>();
-                            orderDictionary.Add(orderEntry.Id.Value, orderEntry);
+                            orderDictionary.Add(order.Id.Value, orderEntry);
                         }
                         productOrder.Product = product;
                         orderEntry.OrderItems.Add(productOrder);
@@ -94,42 +94,54 @@ namespace Shop.Data
         public DataWrapper<OrderDto> CreateOrder(OrderDto order)
         {
             var result = new DataWrapper<OrderDto>();
-            IDbTransaction transaction = _connection.BeginTransaction();
-            try
+            using (_connection)
             {
-                result.Data = _connection.Query<OrderDto>("Order_Add_Or_Update", order, commandType: CommandType.StoredProcedure).FirstOrDefault();
-
-                result.Data.OrderItems = new List<ProductOrderDto>();
-                foreach (var item in order.OrderItems)
+                _connection.Open();
+                using (var transaction = _connection.BeginTransaction())
                 {
-                    
-                    result.Data.OrderItems.Add(_connection.Query<ProductOrderDto, ProductDto, ProductOrderDto>("Product_Order_Add_Or_Update",
-                        (productOrder, product) =>
+                    try
+                    {
+                        result.Data = _connection.Query<OrderDto>("Order_Add_Or_Update @id, @address, @customerId", 
+                        new
                         {
-                           ProductOrderDto productOrderEntry;
-                            productOrderEntry = productOrder;
-                            productOrderEntry.Product = product;
-                            return productOrderEntry;
-                        },
+                            order.Id,
+                            order.Address,
+                            order.CustomerId
 
-                        new 
-                        { 
-                            id = item.Id.Value,
-                            productId = item.Product.Id,
-                            OrderId = result.Data.Id,
-                           item.Quantity
-                        }, 
-                        splitOn: "Id", commandType: CommandType.StoredProcedure).FirstOrDefault());
+                        }, transaction: transaction).FirstOrDefault();
+
+                        result.Data.OrderItems = new List<ProductOrderDto>();
+                        foreach (var item in order.OrderItems)
+                        {
+
+                            result.Data.OrderItems.Add(_connection.Query<ProductOrderDto, ProductDto, ProductOrderDto>("Product_Order_Add_Or_Update",
+                                (productOrder, product) =>
+                                {
+                                    ProductOrderDto productOrderEntry;
+                                    productOrderEntry = productOrder;
+                                    productOrderEntry.Product = product;
+                                    return productOrderEntry;
+                                },
+
+                                new
+                                {
+                                    ProductId =item.Product.Id,
+                                    OrderId = result.Data.Id,
+                                    quantity = item.Quantity
+                                },
+                                splitOn: "Id", transaction: transaction, commandType: CommandType.StoredProcedure).FirstOrDefault());
+                        }
+                        transaction.Commit();
+                        result.IsOk = true;
+                    }
+                    catch (Exception ex)
+                    {
+                        transaction.Rollback();
+                        result.ExceptionMessage = ex.Message;
+                    }
+                    return result;
                 }
-                transaction.Commit();
-                result.IsOk = true;
             }
-            catch (Exception ex)
-            {
-                transaction.Rollback();
-                result.ExceptionMessage = ex.Message;
-            }
-            return result;
         }
 
         public DataWrapper<int> DeleteOrderById(long id)

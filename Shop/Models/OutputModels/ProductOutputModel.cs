@@ -1,15 +1,8 @@
 ﻿namespace Shop.API.Models.OutputModels
 {
-    public class ProductOutputModel
+    public class ProductOutputModel : BaseProductOutputModel
     {
-		public int? Id { get; set; }
-		public decimal Price { get; set; }
-		public string Manufacturer { get; set; }
-		public string Model { get; set; }
-		public int? YearOfManufacture { get; set; }
-		public int? Length { get; set; }
-		public int? Width { get; set; }
-		public int? Height { get; set; }
+
 		public int? AirSpeed { get; set; }
 		public bool? DryingMode { get; set; }
 		public int? NumberOfRecipes { get; set; }

@@ -6,7 +6,7 @@ namespace Shop.Data
     public interface IShopRepository
     {
         DataWrapper<OrderDto> GetOrderById(long id);
-        DataWrapper<List<OrderDto>> GetOrderByCustomerId(long customerId);
+        DataWrapper<List<OrderDto>> GetOrderByCustomerId(int customerId);
         DataWrapper<OrderDto> CreateOrder(OrderDto order);
         DataWrapper<int> DeleteOrderById(long id);
         DataWrapper<long> AddProduct(ProductDto product);

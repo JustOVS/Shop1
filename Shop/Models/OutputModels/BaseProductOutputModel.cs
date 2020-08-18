@@ -15,5 +15,6 @@ namespace Shop.API.Models.OutputModels
 		public int? Length { get; set; }
 		public int? Width { get; set; }
 		public int? Height { get; set; }
+		public string CategoryName { get; set; }
 	}
 }

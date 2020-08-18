@@ -72,7 +72,7 @@ namespace Shop.Data
                         {
                             orderEntry = order;
                             orderEntry.OrderItems = new List<ProductOrderDto>();
-                            orderDictionary.Add(order.Id.Value, orderEntry);
+                            orderDictionary.Add(orderEntry.Id.Value, orderEntry);
                         }
                         productOrder.Product = product;
                         orderEntry.OrderItems.Add(productOrder);

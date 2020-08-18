@@ -10,6 +10,7 @@ namespace Shop.API.Configuration
         {
             builder.RegisterType<ShopRepository>().As<IShopRepository>();
             builder.RegisterType<StorageOptions>().As<IStorageOptions>();
+            builder.RegisterType<ProductToCategoryMapper>();
         }
     }
 }

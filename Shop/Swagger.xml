@@ -51,7 +51,7 @@
             </summary>
             <param name="id"></param>    
         </member>
-        <member name="M:Shop.Controllers.ProductController.GetAllProductsByCategoryName(System.Int32)">
+        <member name="M:Shop.Controllers.ProductController.GetAllProductsByCategoryId(System.Int32)">
             <summary>
             gets all products by Category id
             </summary>

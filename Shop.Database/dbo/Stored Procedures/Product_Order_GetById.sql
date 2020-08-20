@@ -18,5 +18,5 @@ begin
 
 	from dbo.[Product_Order] po
 	join dbo.[Product] p on p.id = po.ProductId
-	where po.Id=@id
+	where po.id=@id
 end

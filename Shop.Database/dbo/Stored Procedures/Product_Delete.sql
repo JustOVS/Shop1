@@ -4,5 +4,5 @@ as
 begin
 	update dbo.[Product]
 	set IsDeleted = 1
-	where Id = @id;
+	where id = @id;
 end;

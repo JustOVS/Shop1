@@ -13,18 +13,17 @@ namespace Shop.Controllers
 {
     [ApiController]
     [Route("[controller]")]
-    public class ProductController : Controller
+    public class ProductController : Responser
     {
         private readonly IShopRepository _repo;
         private readonly IMapper _mapper;
-        private readonly ProductToCategoryMapper _categoryMapper;
+  
 
-        public ProductController(IShopRepository repo, IMapper mapper, ProductToCategoryMapper categoryMapper)
+        public ProductController(IShopRepository repo, IMapper mapper, ProductToCategoryMapper categoryMapper) : base (categoryMapper)
         {
 
             _mapper = mapper;
             _repo = repo;
-            _categoryMapper = categoryMapper;
         }
 
 
@@ -95,40 +94,40 @@ namespace Shop.Controllers
             return MakeResponse(dataWrapper, categoryId);
         }
 
-        private ActionResult<T> MakeResponse<T>(DataWrapper<T> dataWrapper)
-        {
-            if (!dataWrapper.IsOk)
-            {
-                return BadRequest(dataWrapper.ExceptionMessage);
-            }
-            return Ok(dataWrapper.Data);
-        }
-        private ActionResult<List<BaseProductOutputModel>> MakeResponse(DataWrapper<List<ProductDto>> dataWrapper, int categoryId)
-        {
-            if (!dataWrapper.IsOk)
-            {
-                return BadRequest(dataWrapper.ExceptionMessage);
-            }
-            return Ok(_categoryMapper.SelectOfDesiredCategory(dataWrapper.Data, categoryId));
-        }
+        //private ActionResult<T> MakeResponse<T>(DataWrapper<T> dataWrapper)
+        //{
+        //    if (!dataWrapper.IsOk)
+        //    {
+        //        return BadRequest(dataWrapper.ExceptionMessage);
+        //    }
+        //    return Ok(dataWrapper.Data);
+        //}
+        //private ActionResult<List<BaseProductOutputModel>> MakeResponse(DataWrapper<List<ProductDto>> dataWrapper, int categoryId)
+        //{
+        //    if (!dataWrapper.IsOk)
+        //    {
+        //        return BadRequest(dataWrapper.ExceptionMessage);
+        //    }
+        //    return Ok(_categoryMapper.SelectOfDesiredCategory(dataWrapper.Data, categoryId));
+        //}
 
-        private ActionResult<BaseProductOutputModel> MakeResponse(DataWrapper<ProductDto> dataWrapper)
-        {
-            if (!dataWrapper.IsOk)
-            {
-                return BadRequest(dataWrapper.ExceptionMessage);
-            }
-            return Ok(_categoryMapper.MapToCategory(dataWrapper.Data));
-        }
+        //private ActionResult<BaseProductOutputModel> MakeResponse(DataWrapper<ProductDto> dataWrapper)
+        //{
+        //    if (!dataWrapper.IsOk)
+        //    {
+        //        return BadRequest(dataWrapper.ExceptionMessage);
+        //    }
+        //    return Ok(_categoryMapper.MapToCategory(dataWrapper.Data));
+        //}
 
-        private ActionResult<List<BaseProductOutputModel>> MakeResponse(DataWrapper<List<ProductDto>> dataWrapper)
-        {
-            if (!dataWrapper.IsOk)
-            {
-                return BadRequest(dataWrapper.ExceptionMessage);
-            }
-            return Ok(_categoryMapper.MapToCategory(dataWrapper.Data));
-        }
+        //private ActionResult<List<BaseProductOutputModel>> MakeResponse(DataWrapper<List<ProductDto>> dataWrapper)
+        //{
+        //    if (!dataWrapper.IsOk)
+        //    {
+        //        return BadRequest(dataWrapper.ExceptionMessage);
+        //    }
+        //    return Ok(_categoryMapper.MapToCategory(dataWrapper.Data));
+        //}
 
     }
 }

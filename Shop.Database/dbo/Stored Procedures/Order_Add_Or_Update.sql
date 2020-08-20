@@ -11,7 +11,7 @@ begin
 declare @time datetime2(7) = SYSDATETIME()
 merge  dbo.[Order] o
 using (values (@id)) n(Id) 
-on o.Id = n.Id 
+on o.id = n.Id 
 when matched and o.IsDeleted=0
 	then update 
 		set o.Address = @address,

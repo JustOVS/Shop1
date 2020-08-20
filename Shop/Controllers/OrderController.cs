@@ -6,17 +6,18 @@ using Shop.Data;
 using Shop.API.Models.OutputModels;
 using Shop.Data.Dto;
 using Shop.API.Models.InputModels;
+using Shop.API.Configuration;
 
 namespace Shop.Controllers
 {
     [ApiController]
     [Route("[controller]")]
-    public class OrderController : Controller
+    public class OrderController : Responser
     {
         private readonly IShopRepository _repo;
         private readonly IMapper _mapper;
 
-        public OrderController( IShopRepository repo, IMapper mapper)
+        public OrderController( IShopRepository repo, IMapper mapper, ProductToCategoryMapper categoryMapper) : base (categoryMapper)
         {
 
             _mapper = mapper;
@@ -80,25 +81,25 @@ namespace Shop.Controllers
         }
 
 
-        private delegate T DtoConverter<T, K>(K dto);
+        //private delegate T DtoConverter<T, K>(K dto);
 
-        private ActionResult<T> MakeResponse<T>(DataWrapper<T> dataWrapper)
-        {
-            if (!dataWrapper.IsOk)
-            {
-                return BadRequest(dataWrapper.ExceptionMessage);
-            }
-            return Ok(dataWrapper.Data);
-        }
+        //private ActionResult<T> MakeResponse<T>(DataWrapper<T> dataWrapper)
+        //{
+        //    if (!dataWrapper.IsOk)
+        //    {
+        //        return BadRequest(dataWrapper.ExceptionMessage);
+        //    }
+        //    return Ok(dataWrapper.Data);
+        //}
 
-        private ActionResult<T> MakeResponse<T, K>(DataWrapper<K> dataWrapper, DtoConverter<T, K> dtoConverter)
-        {
-            if (!dataWrapper.IsOk)
-            {
-                return BadRequest(dataWrapper.ExceptionMessage);
-            }
-            return Ok(dtoConverter(dataWrapper.Data));
-        }
+        //private ActionResult<T> MakeResponse<T, K>(DataWrapper<K> dataWrapper, DtoConverter<T, K> dtoConverter)
+        //{
+        //    if (!dataWrapper.IsOk)
+        //    {
+        //        return BadRequest(dataWrapper.ExceptionMessage);
+        //    }
+        //    return Ok(dtoConverter(dataWrapper.Data));
+        //}
     }
 }
 

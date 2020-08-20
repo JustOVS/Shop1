@@ -26,6 +26,8 @@ namespace Shop.API.Configuration
 
             CreateMap<ProductDto, ProductOutputModel>();
 
+            CreateMap<ProductDto, ProductForOrderOutputModel>();
+
             CreateMap<ProductInputModel, ProductDto>();
 
             CreateMap<ProductDto, VacuumCleanerOutputModel>()

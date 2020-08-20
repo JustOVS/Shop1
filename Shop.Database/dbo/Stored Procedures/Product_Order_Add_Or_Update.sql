@@ -10,7 +10,7 @@ as
 begin
 merge  dbo.[Product_Order] p
 using (values (@id)) n(Id) 
-on p.Id = n.Id 
+on p.id = n.Id 
 when matched
 	then update 
 		set p.ProductId = @ProductId,

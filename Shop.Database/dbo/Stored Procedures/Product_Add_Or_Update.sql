@@ -23,7 +23,7 @@ as
 begin
 merge  dbo.[Product] p
 using (values (@id)) n(Id) 
-on p.Id = n.Id 
+on p.id = n.Id 
 when matched and p.IsDeleted=0
 	then update 
 		set p.Price = @price,

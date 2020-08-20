@@ -21,5 +21,5 @@ begin
 			p.NumberOfModes
 	
 	from dbo.[Product] p
-	where p.Id=@id and p.IsDeleted=0
+	where p.id=@id and p.IsDeleted=0
 end

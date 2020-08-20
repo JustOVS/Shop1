@@ -5,5 +5,5 @@ as
 begin
 	update dbo.[Order]
 	set IsDeleted = 1
-	where Id = @id;
+	where id = @id;
 end;

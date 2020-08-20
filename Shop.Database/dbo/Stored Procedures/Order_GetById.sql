@@ -11,5 +11,5 @@ begin
 			o.Address,
 			o.CustomerId
 	from [dbo].[Order] o
-	where o.Id=@id and o.IsDeleted=0
+	where o.id=@id and o.IsDeleted=0
 end

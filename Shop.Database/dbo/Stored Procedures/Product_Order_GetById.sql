@@ -2,6 +2,7 @@
 
 
 
+
 CREATE procedure [dbo].[Product_Order_GetById]
 @id bigint
 as
@@ -13,21 +14,8 @@ begin
 			p.Price,
 			p.Manufacturer,
 			p.Model,
-			p.YearOfManufacture,
-			p.Length,
-			p.Width,
-			p.Height,
-			p.AirSpeed,
-			p.DryingMode,
-			p.NumberOfRecipes,
-			p.NumberOfNozzles,
-			p.Power,
-			p.Volume,
-			p.DescalingProtection,
-			p.NoiseLevel,
-			p.NumberOfCompartments,
-			p.NumberOfModes
-	
+			p.YearOfManufacture
+
 	from dbo.[Product_Order] po
 	join dbo.[Product] p on p.id = po.ProductId
 	where po.Id=@id

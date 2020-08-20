@@ -1,0 +1,61 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Shop.API</name>
+    </assembly>
+    <members>
+        <member name="M:Shop.Controllers.OrderController.GetOrderById(System.Int64)">
+            <summary>
+            gets order by Id with all information
+            </summary>
+            <param name="id"></param>       
+        </member>
+        <member name="M:Shop.Controllers.OrderController.CreateOrder(Shop.API.Models.InputModels.OrderInputModel)">
+            <summary>
+            creates a new order
+            </summary>
+            <param name="order"></param>       
+        </member>
+        <member name="M:Shop.Controllers.OrderController.GetOrdersByCustomerId(System.Int32)">
+            <summary>
+            gets orders by customers Id 
+            </summary>
+            <param name="customerId"></param>       
+        </member>
+        <member name="M:Shop.Controllers.OrderController.DeleteOrderById(System.Int64)">
+            <summary>
+            delete order by  id 
+            </summary>
+            <param name="id"></param>    
+        </member>
+        <member name="M:Shop.Controllers.ProductController.GetAllProducts">
+            <summary>
+            gets all products
+            </summary>
+        </member>
+        <member name="M:Shop.Controllers.ProductController.GetProductById(System.Int64)">
+            <summary>
+            gets product by Id
+            </summary>
+            <param name="id"></param>       
+        </member>
+        <member name="M:Shop.Controllers.ProductController.AddProduct(Shop.API.Models.InputModels.ProductInputModel)">
+            <summary>
+            Add new product
+            </summary>
+            <param name="product"></param>       
+        </member>
+        <member name="M:Shop.Controllers.ProductController.DeleteProductById(System.Int64)">
+            <summary>
+            delete product by  id 
+            </summary>
+            <param name="id"></param>    
+        </member>
+        <member name="M:Shop.Controllers.ProductController.GetAllProductsByCategoryId(System.Int32)">
+            <summary>
+            gets all products by Category id
+            </summary>
+            <param name="categoryId"></param>
+        </member>
+    </members>
+</doc>

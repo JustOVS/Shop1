@@ -1,0 +1,7 @@
+﻿CREATE TABLE [dbo].[Storage] (
+    [id]   INT           IDENTITY (1, 1) NOT NULL,
+    [Name] NVARCHAR (30) NOT NULL,
+    CONSTRAINT [PK_STORAGE] PRIMARY KEY CLUSTERED ([id] ASC),
+    UNIQUE NONCLUSTERED ([Name] ASC)
+);
+
